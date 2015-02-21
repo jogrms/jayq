@@ -3,6 +3,8 @@
   (:require [clojure.string :as string]
             [cljs.reader :as reader]))
 
+(def ^:private jquery (js/jQuery.noConflict true))
+
 (defn crate-meta [func]
   (.-prototype._crateGroup func))
 
@@ -17,11 +19,11 @@
 
 (defn $
   ([sel]
-     (js/jQuery (->selector sel)))
+     (jquery (->selector sel)))
   ([sel context]
-     (js/jQuery (->selector sel) context)))
+     (jquery (->selector sel) context)))
 
-(extend-type js/jQuery
+(extend-type jquery
 
   ISeqable
   (-seq [this] (when (.get this 0)
@@ -302,7 +304,7 @@
 (defn ^:private mimetype-converter [s]
   (reader/read-string (str s)))
 
-(.ajaxSetup js/jQuery
+(.ajaxSetup jquery
             (clj->js
              {:accepts {:edn "application/edn, text/edn"
                         :clojure "application/clojure, text/clojure"}
@@ -341,22 +343,22 @@
 
 (defn ajax
   ([url settings]
-     (.ajax js/jQuery url (->ajax-settings settings)))
+     (.ajax jquery url (->ajax-settings settings)))
   ([settings]
-     (.ajax js/jQuery (->ajax-settings settings))))
+     (.ajax jquery (->ajax-settings settings))))
 
 (defn xhr [[method uri] content callback]
   (let [params (clj->js {:type (string/upper-case (name method))
                          :data (clj->js content)
                          :success callback})]
-    (.ajax js/jQuery uri params)))
+    (.ajax jquery uri params)))
 
 (defn read
   "Reads clojure data from element content (preferably a script tag with type=edn/clojure)"
   [$elem]
   (-> $elem html reader/read-string))
 
-(def $contains js/jQuery.contains)
+(def $contains jquery.contains)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Events
@@ -466,8 +468,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(def $deferred js/jQuery.Deferred)
-(def $when js/jQuery.when)
+(def $deferred jquery.Deferred)
+(def $when jquery.when)
 
 (defn then
   ([deferred done-fn fail-fn]
