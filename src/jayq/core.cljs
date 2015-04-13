@@ -3,7 +3,7 @@
   (:require [clojure.string :as string]
             [cljs.reader :as reader]))
 
-(def ^:private jquery (js/jQuery.noConflict true))
+(def jquery (js/jQuery.noConflict true))
 
 (defn crate-meta [func]
   (.-prototype._crateGroup func))
